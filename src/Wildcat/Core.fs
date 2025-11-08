@@ -36,14 +36,30 @@ module PriceLevel =
           Count = int32 0 }
 
 
-module Messages =
+module TopOfBook =
+    // TODO: replace Symbol with InstrumentId and Exchange with ExchangeId
+    type T =
+        { Symbol: Symbol
+          TransactTime: DateTimeUtc
+          SequenceNumber: uint64
+          Exchange: Exchange
+          BestBid: PriceLevel.T option
+          BestAsk: PriceLevel.T option }
 
-    module TopOfBookMessage =
-        // TODO: replace Symbol with InstrumentId and Exchange with ExchangeId
-        type T =
-            { Symbol: Symbol
-              SequenceNumber: uint64
-              TransactTime: DateTimeUtc
-              Exchange: Exchange
-              BestBid: PriceLevel.T option
-              BestAsk: PriceLevel.T option }
+
+    /// <summary>
+    /// Creates a ``TopOfBook``.
+    /// </summary>
+    /// <param name="symbol">The symbol.</param>
+    /// <param name="transactTime">The transact time.</param>
+    /// <param name="seqNum">The sequence number.</param>
+    /// <param name="exchange">The exchange.</param>
+    /// <param name="bestBid">The best bid price level.</param>
+    /// <param name="bestAsk">The best ask price level.</param>
+    let create symbol transactTime seqNum exchange bestBid bestAsk =
+        { Symbol = symbol
+          TransactTime = transactTime
+          SequenceNumber = seqNum
+          Exchange = exchange
+          BestBid = bestBid
+          BestAsk = bestAsk }
