@@ -10,6 +10,14 @@ type Quantity = Quantity of float
 type DateTimeUtc = DateTimeUtc of DateTimeOffset
 
 
+module Constants =
+    [<Literal>]
+    let UINT64_NULL = 18446744073709551615UL // System.UInt64.MaxValue
+
+    let DATETIME_MILLIS_FMT = "yyyy-MM-ddTHH:mm:ss.fffZ"
+    let DATETIME_MICROS_FMT = "yyyy-MM-ddTHH:mm:ss.ffffffZ"
+
+
 module PriceLevel =
     type T =
         { Price: Price
@@ -150,11 +158,23 @@ module Parser =
     /// <summary>
     /// Parses the string representation of a timestamp to a ``DateTimeUtc``.
     /// </summary>
-    /// <param name="s">A string of the time to parse. The input string must be an ISO 601 formatted timestamp with microsecond precision.</param>
+    /// <param name="s">A string of the time to parse. The input string must be an ISO 8601 formatted timestamp with microsecond precision.</param>
     /// <returns>Returns <c>Some</c> with the value if successful otherwise <c>None</c>.</returns>
     let tryParseDateTimeUtcMicros (s: string) =
-        let fmt = "yyyy-MM-ddTHH:mm:ss.ffffffZ"
+        let fmt = Constants.DATETIME_MICROS_FMT
+        let success, value = DateTimeOffset.TryParseExact(s, fmt, null, DateTimeStyles.None)
 
+        match success with
+        | true -> Some(DateTimeUtc value)
+        | false -> None
+
+
+    /// <summary>
+    /// Parses the string representation of a timestamp to a ``DateTimeUtc``.
+    /// </summary>
+    /// <param name="s">A string of the time to parse. The input string must be an ISO 8601 formatted timestamp with millisecond precision.</param>
+    /// <returns>Returns <c>Some</c> with the value if successful otherwise <c>None</c>.</returns>
+    let tryParseDateTimeUtc (s: string) (fmt: string) =
         let success, value = DateTimeOffset.TryParseExact(s, fmt, null, DateTimeStyles.None)
 
         match success with
