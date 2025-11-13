@@ -53,7 +53,7 @@ module CoinbaseRest =
         let eventTimeMicros = Parser.tryDropNanos time
 
         match eventTimeMicros with
-        | Some x -> Parser.tryParseDateTimeUtcMicros x
+        | Some x -> Parser.tryParseDateTimeUtc x Constants.DATETIME_MICROS_FMT
         | None -> None
 
 
@@ -69,7 +69,7 @@ module CoinbaseRest =
         | _ -> None
 
 
-    let private processProductBookResponse (response: string) (symbol: Symbol) (exchange: Exchange) =
+    let private processProductBookResponse (response: string) (symbol: Symbol) =
         // Process the json product book response to a TopOfBook.T
         // Example: {"bids":[["113729.4","0.28534551",5]],"asks":[["113729.41","0.00096729",2]],"sequence":114340891054,"auction_mode":false,"auction":null,"time":"2025-10-28T02:50:43.768106912Z"}
         use jdoc = JsonDocument.Parse(response)
@@ -92,7 +92,7 @@ module CoinbaseRest =
             else
                 None
 
-        // Get the bst ask
+        // Get the best ask
         let asks = elem.GetProperty("asks")
 
         let bestAsk =
@@ -132,7 +132,7 @@ module CoinbaseRest =
             match result with
             | Ok response ->
                 let symbol = symbolFromProductId productId
-                let tob = processProductBookResponse response symbol exchange
+                let tob = processProductBookResponse response symbol
 
                 match tob with
                 | Some tob_ -> onMessage tob_

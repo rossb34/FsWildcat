@@ -158,10 +158,10 @@ module Parser =
     /// <summary>
     /// Parses the string representation of a timestamp to a ``DateTimeUtc``.
     /// </summary>
-    /// <param name="s">A string of the time to parse. The input string must be an ISO 8601 formatted timestamp with microsecond precision.</param>
+    /// <param name="s">A string of the time to parse. The input string must be an ISO 8601 formatted timestamp.</param>
+    /// <param name="fmt">The format of the input timestamp string.</param>
     /// <returns>Returns <c>Some</c> with the value if successful otherwise <c>None</c>.</returns>
-    let tryParseDateTimeUtcMicros (s: string) =
-        let fmt = Constants.DATETIME_MICROS_FMT
+    let tryParseDateTimeUtc (s: string) (fmt: string) =
         let success, value = DateTimeOffset.TryParseExact(s, fmt, null, DateTimeStyles.None)
 
         match success with
@@ -172,14 +172,19 @@ module Parser =
     /// <summary>
     /// Parses the string representation of a timestamp to a ``DateTimeUtc``.
     /// </summary>
+    /// <param name="s">A string of the time to parse. The input string must be an ISO 8601 formatted timestamp with microsecond precision.</param>
+    /// <returns>Returns <c>Some</c> with the value if successful otherwise <c>None</c>.</returns>
+    let tryParseDateTimeUtcMicros (s: string) =
+        tryParseDateTimeUtc s Constants.DATETIME_MICROS_FMT
+    
+
+    /// <summary>
+    /// Parses the string representation of a timestamp to a ``DateTimeUtc``.
+    /// </summary>
     /// <param name="s">A string of the time to parse. The input string must be an ISO 8601 formatted timestamp with millisecond precision.</param>
     /// <returns>Returns <c>Some</c> with the value if successful otherwise <c>None</c>.</returns>
-    let tryParseDateTimeUtc (s: string) (fmt: string) =
-        let success, value = DateTimeOffset.TryParseExact(s, fmt, null, DateTimeStyles.None)
-
-        match success with
-        | true -> Some(DateTimeUtc value)
-        | false -> None
+    let tryParseDateTimeUtcMillis (s: string) =
+        tryParseDateTimeUtc s Constants.DATETIME_MILLIS_FMT
 
 
     /// <summary>
